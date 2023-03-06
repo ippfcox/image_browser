@@ -9,7 +9,26 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
+            background-color: #fff;
+            color: #333;
+        }
+
+        .title-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background-color: #fafafa;
+            box-shadow: 0px -2px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .container {
@@ -17,6 +36,8 @@
             flex-wrap: wrap;
             justify-content: space-between;
             padding: 5px;
+            padding-top: 48px;
+            padding-bottom: 48px;
         }
 
         .thumbnail {
@@ -24,10 +45,10 @@
             display: flex;
             align-items: center;
             /* padding: 10px; */
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #eee;
             margin-bottom: 5px;
             background-color: #fff;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
 
         .thumbnail-image {
@@ -45,6 +66,7 @@
         }
 
         .thumbnail-caption {
+            color: #666;
             flex-grow: 1;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -67,22 +89,51 @@
             color: #999;
         }
 
+        .fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            width: calc(100% - 20px);
+        }
+
         .pagination {
-            position: static;
-            margin-top: 20px;
-            margin-bottom: 20px;
             background-color: #fafafa;
+            box-shadow: 0px -1px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 48px;
         }
 
         .pagination a {
-            margin-right: 10px;
-            margin-left: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 36px;
+            line-height: 36px;
+            padding: 0 16px;
+            border-radius: 18px;
             font-size: 14px;
+            text-decoration: none;
+            background-color: #f4f4f4;
+            color: #333;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .pagination a:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .pagination a.active {
+            background-color: #333;
+            color: #fff;
         }
     </style>
 </head>
 
 <body>
+    <div class="title-bar">
+        <span class="title">Image Browser</span>
+    </div>
     <div class="container">
         {{range $i, $img := .Images}}
         <div class="thumbnail">
@@ -97,7 +148,7 @@
         </div>
         {{end}}
     </div>
-    <div class="pagination">
+    <div class="pagination fixed-bottom">
         <a href="?page={{.PrevPage}}">&lt;&lt;</a>
         {{if eq .ShowFirstPage true}}
         <a href="?page={{.FirstPage}}">{{.FirstPage}}</a>
