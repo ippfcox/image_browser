@@ -12,24 +12,36 @@
             background-color: #fafafa;
         }
 
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 5px;
+        }
+
         .thumbnail {
+            width: calc(50% - 5px);
             display: flex;
             align-items: center;
-            padding: 10px;
+            /* padding: 10px; */
             border-bottom: 1px solid #ddd;
+            margin-bottom: 5px;
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
         }
 
         .thumbnail-image {
             flex-shrink: 0;
-            margin-right: 10px;
+            margin-right: 5px;
         }
 
         .thumbnail-image img {
             display: block;
-            width: 80px;
-            height: 80px;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            border-radius: 5px;
+            object-position: center;
+            border-radius: 3px;
         }
 
         .thumbnail-caption {
@@ -39,7 +51,7 @@
         }
 
         .thumbnail-title {
-            font-size: 16px;
+            font-size: 12px;
             font-weight: bold;
             margin: 0;
             padding: 0;
@@ -49,7 +61,7 @@
         }
 
         .thumbnail-date {
-            font-size: 12px;
+            font-size: 8px;
             margin: 0;
             padding: 0;
             color: #999;
@@ -66,13 +78,6 @@
             margin-right: 10px;
             margin-left: 10px;
             font-size: 14px;
-        }
-
-        @media screen and (max-width: 768px) {
-            .thumbnail {
-                width: 90%;
-                margin: 5%;
-            }
         }
     </style>
 </head>

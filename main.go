@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
+	"image"
 	"io"
 	"io/fs"
 	"log"
@@ -23,6 +24,11 @@ import (
 
 //go:embed image_browse.html
 var imageBrowseHtml embed.FS
+
+const (
+	kPageSize   = 30
+	kThumbWidth = 80
+)
 
 var dir, reverseProxyAddr string
 var port int
@@ -82,8 +88,7 @@ func imageBrowseHandler(w http.ResponseWriter, r *http.Request) {
 	page, _ := strconv.Atoi(r.FormValue("page"))
 
 	pageRange := 1
-	pageSize := 10
-	pageCount := (len(imageInfos) + pageSize - 1) / pageSize
+	pageCount := (len(imageInfos) + kPageSize - 1) / kPageSize
 	// clip
 	page = Clip(page, 1, pageCount)        // current page
 	prevPage := Clip(page-1, 1, pageCount) // previous page
@@ -98,8 +103,8 @@ func imageBrowseHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	start := (page - 1) * pageSize
-	end := start + pageSize
+	start := (page - 1) * kPageSize
+	end := start + kPageSize
 	if end > len(imageInfos) {
 		end = len(imageInfos)
 	}
@@ -128,7 +133,6 @@ func imageBrowseHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func thumbHandler(w http.ResponseWriter, r *http.Request) {
-	thumbWidth := 240
 	id, _ := strconv.Atoi(r.FormValue("id"))
 	imgInfo := imageInfos[Clip(id, 0, len(imageInfos)-1)]
 	f, err := os.Open(imgInfo.Path)
@@ -143,7 +147,15 @@ func thumbHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	thumb := imaging.Resize(img, thumbWidth, thumbWidth*img.Bounds().Dy()/img.Bounds().Dx(), imaging.Lanczos)
+	imgWidth := img.Bounds().Max.X
+	imgHeight := img.Bounds().Max.Y
+	var cropRect image.Rectangle
+	if imgWidth > imgHeight {
+		cropRect = image.Rect((imgWidth-imgHeight)/2, 0, imgHeight, imgHeight)
+	} else {
+		cropRect = image.Rect(0, 0, imgWidth, imgWidth)
+	}
+	thumb := imaging.Resize(imaging.Crop(img, cropRect), kThumbWidth, kThumbWidth, imaging.Lanczos)
 	imaging.Encode(w, thumb, imaging.JPEG)
 }
 
