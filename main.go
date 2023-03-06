@@ -128,7 +128,7 @@ func imageBrowseHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func thumbHandler(w http.ResponseWriter, r *http.Request) {
-	thumbWidth := 360
+	thumbWidth := 240
 	id, _ := strconv.Atoi(r.FormValue("id"))
 	imgInfo := imageInfos[Clip(id, 0, len(imageInfos)-1)]
 	f, err := os.Open(imgInfo.Path)
