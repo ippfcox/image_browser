@@ -18,11 +18,12 @@
 
         .thumbnail {
             display: block;
-            margin: 10px auto;
+            margin: 10px;
             border: 1px solid #ccc;
             padding: 5px;
             background-color: #fff;
-            max-width: 90%;
+            max-width: 50%;
+            float: left;
         }
 
         .thumbnail img {
@@ -71,7 +72,7 @@
     {{range $i, $img := .Images}}
     <div class="thumbnail">
         <a href="/ib/image?id={{$img.ID}}" target="_blank"><img src="/ib/thumb?id={{$img.ID}}" alt="{{$img.Name}}"></a>
-        <p>{{$img.ID}}</p>
+        <p>{{$img.Name}} - {{$img.ModTime.Format "2006.01.02 15:04:05"}}</p>
     </div>
     {{end}}
     <div class="pagination">

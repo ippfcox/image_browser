@@ -81,8 +81,8 @@ func reverseProxyHandler(w http.ResponseWriter, r *http.Request) {
 func imageBrowseHandler(w http.ResponseWriter, r *http.Request) {
 	page, _ := strconv.Atoi(r.FormValue("page"))
 
-	pageRange := 3
-	pageSize := 5
+	pageRange := 1
+	pageSize := 10
 	pageCount := (len(imageInfos) + pageSize - 1) / pageSize
 	// clip
 	page = Clip(page, 1, pageCount)        // current page
