@@ -34,10 +34,10 @@ var dir, reverseProxyAddr string
 var port int
 var reverseProxy *httputil.ReverseProxy
 var supportedExts = []string{".jpg", ".jpeg", ".png", ".gif", ".bmp"}
-var imageInfos = make([]imageInfo, 0)
+var imageInfos []imageInfo
 
 type imageInfo struct {
-	ID      int
+	ID      int // 数组索引
 	Name    string
 	Path    string
 	ModTime time.Time
@@ -184,25 +184,27 @@ func isImage(info fs.FileInfo) bool {
 
 func loadImages(absdir string) []imageInfo {
 	imageInfos := make([]imageInfo, 0)
-	id := 0
+
 	filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		if !info.IsDir() && isImage(info) {
 			imageInfos = append(imageInfos, imageInfo{
-				ID:      id,
+				ID:      0,
 				Name:    info.Name(),
 				Path:    path,
 				ModTime: info.ModTime(),
 			})
-			id++
 		}
 		return nil
 	})
 	sort.Slice(imageInfos, func(i, j int) bool {
 		return imageInfos[i].ModTime.After(imageInfos[j].ModTime)
 	})
+	for id := range imageInfos {
+		imageInfos[id].ID = id
+	}
 	return imageInfos
 }
 
