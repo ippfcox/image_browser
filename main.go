@@ -7,17 +7,13 @@ import (
 	"html/template"
 	"image"
 	"io"
-	"io/fs"
 	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
 	"path/filepath"
-	"sort"
 	"strconv"
-	"strings"
-	"time"
 
 	"github.com/disintegration/imaging"
 )
@@ -36,13 +32,6 @@ var reverseProxy *httputil.ReverseProxy
 var supportedExts = []string{".jpg", ".jpeg", ".png", ".gif", ".bmp"}
 var imageInfos []imageInfo
 
-type imageInfo struct {
-	ID      int // 数组索引
-	Name    string
-	Path    string
-	ModTime time.Time
-}
-
 func main() {
 	flag.StringVar(&dir, "dir", ".", "image dir")
 	flag.IntVar(&port, "port", 8000, "listen port")
@@ -59,7 +48,7 @@ func main() {
 	}
 	absdir, _ := filepath.Abs(dir)
 	log.Printf("Serve dir: <%s>", absdir)
-	imageInfos = loadImages(absdir)
+	watchImages(absdir)
 	// reverse proxy
 	target, err := url.Parse(reverseProxyAddr)
 	if err == nil {
@@ -176,63 +165,4 @@ func imageHandler(w http.ResponseWriter, r *http.Request) {
 func refreshHandler(w http.ResponseWriter, r *http.Request) {
 	absdir, _ := filepath.Abs(dir)
 	imageInfos = loadImages(absdir)
-}
-
-func isImage(info fs.FileInfo) bool {
-	ext := strings.ToLower(filepath.Ext(info.Name()))
-	for _, imageExt := range supportedExts {
-		if ext == imageExt {
-			return true
-		}
-	}
-	return false
-}
-
-func loadImages(absdir string) []imageInfo {
-	imageInfos := make([]imageInfo, 0)
-
-	filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if !info.IsDir() && isImage(info) {
-			imageInfos = append(imageInfos, imageInfo{
-				ID:      0,
-				Name:    info.Name(),
-				Path:    path,
-				ModTime: info.ModTime(),
-			})
-		}
-		return nil
-	})
-	sort.Slice(imageInfos, func(i, j int) bool {
-		return imageInfos[i].ModTime.After(imageInfos[j].ModTime)
-	})
-	for id := range imageInfos {
-		imageInfos[id].ID = id
-	}
-	return imageInfos
-}
-
-type Ordered interface {
-	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr | ~float32 | ~float64 | ~string
-}
-
-func Max[T Ordered](x, y T) T {
-	if x > y {
-		return x
-	}
-	return y
-}
-
-func Min[T Ordered](x, y T) T {
-	if x < y {
-		return x
-	}
-
-	return y
-}
-
-func Clip[T Ordered](a, min, max T) T {
-	return Min(Max(a, min), max)
 }
