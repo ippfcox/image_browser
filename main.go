@@ -18,12 +18,12 @@ import (
 	"github.com/disintegration/imaging"
 )
 
-//go:embed image_browse.html
+//go:embed image_list.html
 var imageBrowseHtml embed.FS
 
 const (
 	kPageSize   = 30
-	kThumbWidth = 80
+	kThumbWidth = 180
 )
 
 var dir, reverseProxyAddr string
@@ -99,7 +99,7 @@ func imageBrowseHandler(w http.ResponseWriter, r *http.Request) {
 		end = len(imageInfos)
 	}
 
-	tmpl, err := template.ParseFS(imageBrowseHtml, "image_browse.html")
+	tmpl, err := template.ParseFS(imageBrowseHtml, "image_list.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
