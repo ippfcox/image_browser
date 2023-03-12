@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Image Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <style>
+        /* 全局样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Robota', sans-serif;
+            background-color: #f0f0f0;
+            color: #333
+        }
+
+        /* 顶栏样式 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            line-height: 50px;
+            box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.5);
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .image-container {
+            margin-top: 40px;
+            width: 100%;
+            /* position: relative; */
+        }
+
+        .image-container img {
+            max-width: 100%;
+        }
+
+        /* 设置向左向右按钮样式 */
+        .btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.5);
+            border: none;
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            text-align: center;
+            line-height: 50px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn.left {
+            left: 20px;
+        }
+
+        .btn.right {
+            right: 20px;
+        }
+
+        /* 底栏样式 */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: #fafafa;
+            box-shadow: 0px -5px 5px 0px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <span class="title">Image Viewer</span>
+    </div>
+    <div class="image-container">
+        <img src="/ib/image?id={{.Image.ID}}" alt="{{.Image.Name}}">
+        {{if ge .PrevID 0}}
+        <a href="/ib/view?id={{.PrevID}}" class="btn left">&#8249;</a>
+        {{end}}
+        {{if le .NextID .LastID}}
+        <a href="/ib/view?id={{.NextID}}" class="btn right">&#8250;</a>
+        {{end}}
+    </div>
+    <div class="footer">{{.Image.Name}}-{{.Image.ModTime.Format "2006.01.02 15:04:05"}}</div>
+</body>
+
+</html>

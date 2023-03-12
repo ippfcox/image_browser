@@ -134,7 +134,7 @@
         {{range $i, $img := .Images}}
         <div class="thumbnail">
             <div class="thumbnail-image">
-                <a href="/ib/image?id={{$img.ID}}" target="_blank"><img src="/ib/thumb?id={{$img.ID}}"
+                <a href="/ib/view?id={{$img.ID}}"><img src="/ib/thumb?id={{$img.ID}}"
                         alt="{{$img.Name}}"></a>
             </div>
             <div class="thumbnail-caption">
@@ -145,7 +145,7 @@
         {{end}}
     </div>
     <div class="footer">
-        <a href="?page={{.PrevPage}}">&lt;&lt;</a>
+        <a href="?page={{.PrevPage}}">&#8249;</a>
         {{if eq .ShowFirstPage true}}
         <a href="?page={{.FirstPage}}">{{.FirstPage}}</a>
         {{end}}
@@ -159,7 +159,7 @@
         {{if eq .ShowLastPage true}}
         <a href="?page={{.LastPage}}">{{.LastPage}}</a>
         {{end}}
-        <a href="?page={{.NextPage}}">&gt;&gt;</a>
+        <a href="?page={{.NextPage}}">&#8250;</a>
     </div>
 </body>
 

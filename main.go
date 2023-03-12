@@ -19,6 +19,7 @@ import (
 )
 
 //go:embed image_list.html
+//go:embed image_view.html
 var imageBrowseHtml embed.FS
 
 const (
@@ -59,6 +60,7 @@ func main() {
 	http.HandleFunc("/", reverseProxyHandler)
 	http.HandleFunc("/ib/", imageBrowseHandler)
 	http.HandleFunc("/ib/thumb/", thumbHandler)
+	http.HandleFunc("/ib/view/", viewHandler)
 	http.HandleFunc("/ib/image/", imageHandler)
 	log.Printf("Listen and serve on :%d", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
@@ -146,6 +148,27 @@ func thumbHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	thumb := imaging.Resize(imaging.Crop(img, cropRect), kThumbWidth, kThumbWidth, imaging.Lanczos)
 	imaging.Encode(w, thumb, imaging.JPEG)
+}
+
+func viewHandler(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.FormValue("id"))
+	tmpl, err := template.ParseFS(imageBrowseHtml, "image_view.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	id = Clip(id, 0, len(imageInfos)-1)
+	data := map[string]interface{}{
+		"PrevID": id - 1,
+		"NextID": id + 1,
+		"LastID": len(imageInfos) - 1,
+		"Image":  imageInfos[id],
+	}
+	if err = tmpl.Execute(w, data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func imageHandler(w http.ResponseWriter, r *http.Request) {
