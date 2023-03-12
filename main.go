@@ -60,7 +60,6 @@ func main() {
 	http.HandleFunc("/ib/", imageBrowseHandler)
 	http.HandleFunc("/ib/thumb/", thumbHandler)
 	http.HandleFunc("/ib/image/", imageHandler)
-	http.HandleFunc("/ib/refresh/", refreshHandler)
 	log.Printf("Listen and serve on :%d", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
@@ -160,9 +159,4 @@ func imageHandler(w http.ResponseWriter, r *http.Request) {
 	defer f.Close()
 
 	io.Copy(w, f)
-}
-
-func refreshHandler(w http.ResponseWriter, r *http.Request) {
-	absdir, _ := filepath.Abs(dir)
-	imageInfos = loadImages(absdir)
 }
